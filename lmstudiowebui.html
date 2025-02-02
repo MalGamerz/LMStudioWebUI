@@ -1,450 +1,463 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LM Studio Chat</title>
-    <style>
-        :root {
-            --background-color: #1e1e1e;
-            --text-color: #ffffff;
-            --input-background: #2d2d2d;
-            --user-message-color: #2b5278;
-            --assistant-message-color: #2d2d2d;
-            --button-color: #4a90e2;
-            --accent-color: #4caf50;
-            --error-color: #f44336;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>LM Studio Chat</title>
+  <style>
+    :root {
+      --background-color: #1e1e1e;
+      --text-color: #ffffff;
+      --input-background: #2d2d2d;
+      --user-message-color: #2b5278;
+      --assistant-message-color: #2d2d2d;
+      --button-color: #4a90e2;
+      --accent-color: #4caf50;
+      --error-color: #f44336;
+    }
 
-        body,
-        html {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            background-color: var(--background-color);
-            color: var(--text-color);
-        }
+    body,
+    html {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background-color: var(--background-color);
+      color: var(--text-color);
+    }
 
-        #app {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
+    #app {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
 
-        #server-url-container {
-            padding: 0.5rem;
-            background-color: var(--input-background);
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
-        }
+    #server-url-container {
+      padding: 0.5rem;
+      background-color: var(--input-background);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-        #server-url {
-            flex-grow: 1;
-            padding: 0.5rem;
-            margin-right: 0.5rem;
-            margin-bottom: 0.5rem;
-            border: 1px solid #4a5568;
-            border-radius: 0.25rem;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            font-size: 0.9rem;
-        }
+    #server-url {
+      flex-grow: 1;
+      padding: 0.5rem;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+      border: 1px solid #4a5568;
+      border-radius: 0.25rem;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      font-size: 0.9rem;
+    }
 
-        #connect-button {
-            padding: 0.5rem 1rem;
-            background-color: var(--button-color);
-            color: var(--text-color);
-            border: none;
-            border-radius: 0.25rem;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
+    #connect-button {
+      padding: 0.5rem 1rem;
+      background-color: var(--button-color);
+      color: var(--text-color);
+      border: none;
+      border-radius: 0.25rem;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
 
-        #connection-status {
-            width: 100%;
-            text-align: center;
-            padding: 0.25rem;
-            font-size: 0.8rem;
-            background-color: var(--input-background);
-            color: #888;
-        }
+    #connection-status {
+      width: 100%;
+      text-align: center;
+      padding: 0.25rem;
+      font-size: 0.8rem;
+      background-color: var(--input-background);
+    }
 
-        #chat-container {
-            flex-grow: 1;
-            overflow-y: auto;
-            padding: 1rem;
-            display: flex;
-            flex-direction: column;
-        }
+    /* Connection status color classes */
+    #connection-status.connected {
+      color: var(--accent-color);
+    }
+    #connection-status.disconnected {
+      color: var(--error-color);
+    }
 
-        .message {
-            max-width: 85%;
-            margin-bottom: 1rem;
-            padding: 0.5rem 1rem;
-            border-radius: 1rem;
-            word-wrap: break-word;
-            font-size: 0.9rem;
-            line-height: 1.4;
-        }
+    #chat-container {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+    }
 
-        .user-message {
-            align-self: flex-end;
-            background-color: var(--user-message-color);
-            color: #e6f2ff;
-        }
+    .message {
+      max-width: 85%;
+      margin-bottom: 1rem;
+      padding: 0.5rem 1rem;
+      border-radius: 1rem;
+      word-wrap: break-word;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
 
-        .assistant-message {
-            align-self: flex-start;
-            background-color: var(--assistant-message-color);
-            color: var(--text-color);
-        }
+    .user-message {
+      align-self: flex-end;
+      background-color: var(--user-message-color);
+      color: #e6f2ff;
+    }
 
-        .message-header {
-            font-weight: bold;
-            margin-bottom: 0.25rem;
-            font-size: 0.8rem;
-        }
+    .assistant-message {
+      align-self: flex-start;
+      background-color: var(--assistant-message-color);
+      color: var(--text-color);
+    }
 
-        .message-model {
-            font-size: 0.7rem;
-            color: #888;
-            margin-bottom: 0.25rem;
-        }
+    .message-header {
+      font-weight: bold;
+      margin-bottom: 0.25rem;
+      font-size: 0.8rem;
+    }
 
-        .message-content {
-            margin-bottom: 0.25rem;
-        }
+    .message-model {
+      font-size: 0.7rem;
+      color: #888;
+      margin-bottom: 0.25rem;
+    }
 
-        .message-metrics {
-            font-size: 0.7rem;
-            color: #888;
-        }
+    .message-content {
+      margin-bottom: 0.25rem;
+    }
 
-        #input-container {
-            padding: 0.5rem;
-            background-color: var(--input-background);
-            border-top: 1px solid #333;
-            display: flex;
-            align-items: center;
-        }
+    .message-metrics {
+      font-size: 0.7rem;
+      color: #888;
+    }
 
-        #user-input {
-            flex-grow: 1;
-            padding: 0.5rem;
-            border: 1px solid #4a5568;
-            border-radius: 1.5rem;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            font-size: 0.9rem;
-        }
+    #input-container {
+      padding: 0.5rem;
+      background-color: var(--input-background);
+      border-top: 1px solid #333;
+      display: flex;
+      align-items: center;
+    }
 
-        #user-input::placeholder {
-            color: #4a5568;
-        }
+    #user-input {
+      flex-grow: 1;
+      padding: 0.5rem;
+      border: 1px solid #4a5568;
+      border-radius: 1.5rem;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      font-size: 0.9rem;
+    }
 
-        #send-button {
-            background-color: var(--button-color);
-            color: var(--text-color);
-            border: none;
-            border-radius: 50%;
-            width: 2.5rem;
-            height: 2.5rem;
-            margin-left: 0.5rem;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+    #user-input::placeholder {
+      color: #4a5568;
+    }
 
-        #send-button svg {
-            width: 1.2rem;
-            height: 1.2rem;
-        }
+    #send-button {
+      background-color: var(--button-color);
+      color: var(--text-color);
+      border: none;
+      border-radius: 50%;
+      width: 2.5rem;
+      height: 2.5rem;
+      margin-left: 0.5rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-        @media (max-width: 480px) {
-            #user-input {
-                height: 3rem;
-                font-size: 1rem;
-            }
+    #send-button svg {
+      width: 1.2rem;
+      height: 1.2rem;
+    }
 
-            #send-button {
-                width: 3rem;
-                height: 3rem;
-            }
-        }
+    @media (max-width: 480px) {
+      #user-input {
+        height: 3rem;
+        font-size: 1rem;
+      }
 
-        #user-input:focus {
-            outline: none;
-            border-color: var(--accent-color);
-        }
+      #send-button {
+        width: 3rem;
+        height: 3rem;
+      }
+    }
 
-        .model-select {
-            flex-grow: 1;
-            margin: 0 0.5rem;
-            padding: 0.5rem;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            border: 1px solid #4a5568;
-            border-radius: 0.25rem;
-        }
+    #user-input:focus {
+      outline: none;
+      border-color: var(--accent-color);
+    }
 
-        .typing-indicator {
-            animation: pulse 1.5s infinite;
-        }
+    .model-select {
+      flex-grow: 1;
+      margin: 0 0.5rem;
+      padding: 0.5rem;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      border: 1px solid #4a5568;
+      border-radius: 0.25rem;
+    }
 
-        @keyframes pulse {
-            0% { opacity: 0.6; }
-            50% { opacity: 1; }
-            100% { opacity: 0.6; }
-        }
-    </style>
+    .typing-indicator {
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.6; }
+      50% { opacity: 1; }
+      100% { opacity: 0.6; }
+    }
+  </style>
 </head>
-
 <body>
-    <div id="app">
-        <div id="server-url-container">
-            <input type="text" id="server-url" placeholder="http://localhost:1234">
-            <select id="model-select" disabled>
-                <option value="">Select Model</option>
-            </select>
-            <button id="connect-button">Connect</button>
-        </div>
-        <div id="connection-status">Disconnected</div>
-        <div id="chat-container"></div>
-        <div id="input-container">
-            <input type="text" id="user-input" placeholder="Type a message..." disabled>
-            <button id="send-button" disabled>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="22" y1="2" x2="11" y2="13"></line>
-                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                </svg>
-            </button>
-        </div>
+  <div id="app">
+    <div id="server-url-container">
+      <input type="text" id="server-url" placeholder="http://localhost:1234">
+      <select id="model-select" disabled>
+        <option value="">Select Model</option>
+      </select>
+      <button id="connect-button">Connect</button>
     </div>
+    <div id="connection-status" class="disconnected">Disconnected</div>
+    <div id="chat-container"></div>
+    <div id="input-container">
+      <input type="text" id="user-input" placeholder="Type a message..." disabled>
+      <button id="send-button" disabled>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </div>
+  </div>
 
-    <script>
-        const chatContainer = document.getElementById('chat-container');
-        const userInput = document.getElementById('user-input');
-        const serverUrlInput = document.getElementById('server-url');
-        const connectButton = document.getElementById('connect-button');
-        const connectionStatus = document.getElementById('connection-status');
-        const sendButton = document.getElementById('send-button');
-        const modelSelect = document.getElementById('model-select');
+  <script>
+    const chatContainer = document.getElementById('chat-container');
+    const userInput = document.getElementById('user-input');
+    const serverUrlInput = document.getElementById('server-url');
+    const connectButton = document.getElementById('connect-button');
+    const connectionStatus = document.getElementById('connection-status');
+    const sendButton = document.getElementById('send-button');
+    const modelSelect = document.getElementById('model-select');
+
+    let isConnected = false;
+    let currentModel = '';
+    let abortController = null;
+
+    // Sanitize text to prevent XSS
+    function sanitize(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Create the structure for a chat message
+    function createMessageStructure(isUser) {
+      const messageDiv = document.createElement('div');
+      messageDiv.classList.add('message', isUser ? 'user-message' : 'assistant-message');
+
+      const headerDiv = document.createElement('div');
+      headerDiv.classList.add('message-header');
+      headerDiv.textContent = isUser ? 'You' : 'Assistant';
+
+      const modelDiv = document.createElement('div');
+      modelDiv.classList.add('message-model');
+
+      const contentDiv = document.createElement('div');
+      contentDiv.classList.add('message-content');
+
+      const metricsDiv = document.createElement('div');
+      metricsDiv.classList.add('message-metrics');
+
+      messageDiv.append(headerDiv, modelDiv, contentDiv, metricsDiv);
+      return { messageDiv, headerDiv, modelDiv, contentDiv, metricsDiv };
+    }
+
+    // Append a message to the chat container
+    function addMessage(content, isUser, metrics = null) {
+      const sanitizedContent = sanitize(content);
+      const { messageDiv, contentDiv, modelDiv, metricsDiv } = createMessageStructure(isUser);
+      
+      contentDiv.innerHTML = sanitizedContent;
+      metricsDiv.textContent = metrics || '';
+      
+      if (!isUser && currentModel) {
+        modelDiv.textContent = currentModel;
+      }
+
+      chatContainer.appendChild(messageDiv);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    // Connect to the server and load available models
+    async function connectToServer() {
+      const serverUrl = serverUrlInput.value.trim();
+      if (!serverUrl.startsWith('http')) {
+        updateConnectionStatus('Invalid server URL', false);
+        return;
+      }
+
+      try {
+        updateConnectionStatus('Connecting...', false);
+        const response = await fetch(`${serverUrl}/v1/models`);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const { data: models } = await response.json();
+
+        modelSelect.innerHTML =
+          '<option value="">Select Model</option>' +
+          models.map(m => `<option value="${m.id}">${m.id}</option>`).join('');
         
-        let isConnected = false;
-        let currentModel = '';
-        let abortController = null;
+        modelSelect.disabled = false;
+        isConnected = true;
+        updateConnectionStatus('Connected', true);
+        addMessage('Connected successfully. Select a model to begin!', false);
+      } catch (error) {
+        console.error('Connection error:', error);
+        updateConnectionStatus('Connection failed', false);
+        addMessage(`Connection error: ${error.message}`, false);
+      }
+    }
 
-        function sanitize(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
+    // Send a message and process the streaming response
+    async function sendMessage() {
+      if (!isConnected || !currentModel) return;
+      
+      const message = userInput.value.trim();
+      if (!message) return;
 
-        function createMessageStructure(isUser) {
-            const messageDiv = document.createElement('div');
-            messageDiv.classList.add('message', isUser ? 'user-message' : 'assistant-message');
+      // Clear input and disable during processing
+      userInput.value = '';
+      userInput.disabled = true;
+      sendButton.disabled = true;
+      abortController = new AbortController();
 
-            const headerDiv = document.createElement('div');
-            headerDiv.classList.add('message-header');
-            headerDiv.textContent = isUser ? 'You' : 'Assistant';
+      // Add the user message
+      addMessage(message, true);
 
-            const modelDiv = document.createElement('div');
-            modelDiv.classList.add('message-model');
+      // Create the assistant message container with a typing indicator
+      const { messageDiv, contentDiv, metricsDiv } = createMessageStructure(false);
+      contentDiv.innerHTML = '...';
+      contentDiv.classList.add('typing-indicator');
+      chatContainer.appendChild(messageDiv);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
 
-            const contentDiv = document.createElement('div');
-            contentDiv.classList.add('message-content');
-
-            const metricsDiv = document.createElement('div');
-            metricsDiv.classList.add('message-metrics');
-
-            messageDiv.append(headerDiv, modelDiv, contentDiv, metricsDiv);
-            return { messageDiv, headerDiv, modelDiv, contentDiv, metricsDiv };
-        }
-
-        function addMessage(content, isUser, metrics = null) {
-            const sanitizedContent = sanitize(content);
-            const { messageDiv, contentDiv, modelDiv, metricsDiv } = createMessageStructure(isUser);
-            
-            contentDiv.innerHTML = sanitizedContent;
-            metricsDiv.textContent = metrics || '';
-            
-            if (!isUser && currentModel) {
-                modelDiv.textContent = currentModel;
-            }
-
-            chatContainer.appendChild(messageDiv);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-
-        async function connectToServer() {
-            const serverUrl = serverUrlInput.value.trim();
-            if (!serverUrl.startsWith('http')) {
-                updateConnectionStatus('Invalid server URL', false);
-                return;
-            }
-
-            try {
-                updateConnectionStatus('Connecting...', false);
-                const response = await fetch(`${serverUrl}/v1/models`);
-                
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                const { data: models } = await response.json();
-
-                modelSelect.innerHTML = '<option value="">Select Model</option>' + 
-                    models.map(m => `<option value="${m.id}">${m.id}</option>`).join('');
-                
-                modelSelect.disabled = false;
-                isConnected = true;
-                updateConnectionStatus('Connected', true);
-                addMessage('Connected successfully. Select a model to begin!', false);
-                
-            } catch (error) {
-                console.error('Connection error:', error);
-                updateConnectionStatus('Connection failed', false);
-                addMessage(`Connection error: ${error.message}`, false);
-            }
-        }
-
-        async function sendMessage() {
-            if (!isConnected || !currentModel) return;
-            
-            const message = userInput.value.trim();
-            if (!message) return;
-
-            // Clear input and disable during processing
-            userInput.value = '';
-            userInput.disabled = true;
-            sendButton.disabled = true;
-            abortController = new AbortController();
-
-            addMessage(message, true);
-
-            try {
-                const startTime = performance.now();
-                const { messageDiv, contentDiv, metricsDiv } = createMessageStructure(false);
-                chatContainer.appendChild(messageDiv);
-                showTypingIndicator();
-
-                const response = await fetch(`${serverUrlInput.value.trim()}/v1/chat/completions`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        model: currentModel,
-                        messages: [
-                            { role: 'user', content: message }
-                        ],
-                        temperature: 0.7,
-                        max_tokens: null,
-                        stream: true
-                    }),
-                    signal: abortController.signal
-                });
-
-                if (!response.ok || !response.body) {
-                    throw new Error(`HTTP ${response.status}`);
-                }
-
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder();
-                let buffer = '';
-                let botReply = '';
-
-                while (true) {
-                    const { value, done } = await reader.read();
-                    if (done) break;
-                    
-                    buffer += decoder.decode(value);
-                    const chunks = buffer.split('\n\n');
-                    buffer = chunks.pop();
-
-                    for (const chunk of chunks) {
-                        const line = chunk.replace(/^data: /, '').trim();
-                        if (!line || line === '[DONE]') continue;
-                        
-                        try {
-                            const { choices } = JSON.parse(line);
-                            const content = choices[0].delta.content || '';
-                            botReply += content;
-                            contentDiv.innerHTML = sanitize(botReply);
-                            messageDiv.scrollIntoView(false);
-                        } catch (e) {
-                            console.warn('Parse error:', e);
-                        }
-                    }
-                }
-
-                const timeElapsed = ((performance.now() - startTime) / 1000).toFixed(2);
-                metricsDiv.textContent = `${timeElapsed}s elapsed`;
-
-            } catch (error) {
-                if (error.name !== 'AbortError') {
-                    addMessage(`Error: ${error.message}`, false);
-                }
-            } finally {
-                removeTypingIndicator();
-                userInput.disabled = false;
-                sendButton.disabled = false;
-                userInput.focus();
-                abortController = null;
-            }
-        }
-
-        function showTypingIndicator() {
-            const { messageDiv, contentDiv } = createMessageStructure(false);
-            messageDiv.id = 'typing-indicator';
-            contentDiv.textContent = '...';
-            contentDiv.classList.add('typing-indicator');
-            chatContainer.appendChild(messageDiv);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-
-        function removeTypingIndicator() {
-            document.getElementById('typing-indicator')?.remove();
-        }
-
-        // Event Listeners
-        connectButton.addEventListener('click', () => {
-            if (isConnected) {
-                abortController?.abort();
-                isConnected = false;
-                modelSelect.disabled = true;
-                currentModel = '';
-                updateConnectionStatus('Disconnected', false);
-                addMessage('Disconnected from server', false);
-            } else {
-                connectToServer();
-            }
+      try {
+        const startTime = performance.now();
+        const response = await fetch(`${serverUrlInput.value.trim()}/v1/chat/completions`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: currentModel,
+            messages: [{ role: 'user', content: message }],
+            temperature: 0.7,
+            max_tokens: null,
+            stream: true
+          }),
+          signal: abortController.signal
         });
 
-        modelSelect.addEventListener('change', (e) => {
-            currentModel = e.target.value;
-            userInput.disabled = !currentModel;
-            sendButton.disabled = !currentModel;
-        });
-
-        userInput.addEventListener('keypress', (e) => e.key === 'Enter' && sendMessage());
-        sendButton.addEventListener('click', sendMessage);
-
-        function updateConnectionStatus(message, connected) {
-            connectionStatus.textContent = message;
-            connectionStatus.style.color = connected ? 'var(--accent-color)' : 'var(--error-color)';
-            connectButton.textContent = connected ? 'Disconnect' : 'Connect';
-            serverUrlInput.disabled = connected;
-            modelSelect.disabled = !connected;
+        if (!response.ok || !response.body) {
+          throw new Error(`HTTP ${response.status}`);
         }
 
-        // Initialize
-        serverUrlInput.value = window.location.hostname === 'localhost' 
-            ? 'http://localhost:1234' 
-            : '';
-        serverUrlInput.focus();
-    </script>
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+        let botReply = '';
+
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const chunks = buffer.split('\n\n');
+          buffer = chunks.pop();
+
+          for (const chunk of chunks) {
+            const line = chunk.replace(/^data: /, '').trim();
+            if (!line || line === '[DONE]') continue;
+            try {
+              const parsed = JSON.parse(line);
+              if (parsed.choices && parsed.choices.length > 0) {
+                const content = parsed.choices[0].delta.content || '';
+                botReply += content;
+                contentDiv.innerHTML = sanitize(botReply);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+              }
+            } catch (err) {
+              console.warn('Error parsing stream data:', err);
+            }
+          }
+        }
+
+        const timeElapsed = ((performance.now() - startTime) / 1000).toFixed(2);
+        metricsDiv.textContent = `${timeElapsed}s elapsed`;
+        contentDiv.classList.remove('typing-indicator');
+      } catch (error) {
+        if (error.name !== 'AbortError') {
+          addMessage(`Error: ${error.message}`, false);
+        }
+      } finally {
+        userInput.disabled = false;
+        sendButton.disabled = false;
+        userInput.focus();
+        abortController = null;
+      }
+    }
+
+    // Update the connection status and UI elements accordingly
+    function updateConnectionStatus(message, connected) {
+      connectionStatus.textContent = message;
+      if (connected) {
+        connectionStatus.classList.add('connected');
+        connectionStatus.classList.remove('disconnected');
+        connectButton.textContent = 'Disconnect';
+        serverUrlInput.disabled = true;
+        modelSelect.disabled = false;
+      } else {
+        connectionStatus.classList.add('disconnected');
+        connectionStatus.classList.remove('connected');
+        connectButton.textContent = 'Connect';
+        serverUrlInput.disabled = false;
+        modelSelect.disabled = true;
+      }
+    }
+
+    // Event listeners
+    connectButton.addEventListener('click', () => {
+      if (isConnected) {
+        abortController?.abort();
+        isConnected = false;
+        modelSelect.disabled = true;
+        currentModel = '';
+        updateConnectionStatus('Disconnected', false);
+        addMessage('Disconnected from server', false);
+      } else {
+        connectToServer();
+      }
+    });
+
+    modelSelect.addEventListener('change', (e) => {
+      currentModel = e.target.value;
+      userInput.disabled = !currentModel;
+      sendButton.disabled = !currentModel;
+    });
+
+    // Use keydown for more reliable Enter key detection
+    userInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+    sendButton.addEventListener('click', sendMessage);
+
+    // Initialize the server URL input
+    serverUrlInput.value = window.location.hostname === 'localhost' 
+      ? 'http://localhost:1234' 
+      : '';
+    serverUrlInput.focus();
+  </script>
 </body>
-
 </html>
