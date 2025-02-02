@@ -1,80 +1,92 @@
-# LM Studio Chat WebUI(unofficial)
+# LM Studio Chat WebUI (Unofficial)
 
-This is a simple, browser-based chat interface for interacting with your LM Studio server. It allows you to connect to your locally hosted LM Studio model and chat with it from any device with a web browser, including mobile phones.
+A simple, browser-based chat interface for interacting with your LM Studio server. Chat with your LM Studio model from any device—desktop or mobile—using this responsive, dark mode web UI.
 
 ## Features
 
-- Dark mode interface
-- Connect to any LM Studio server
-- Chat with your LM Studio model
-- View token usage and response time for each message
-- Mobile-friendly design
+- **Dark Mode Interface:** Enjoy a sleek, modern dark theme ideal for low-light environments.
+- **Easy Server Connection:** Connect to any LM Studio server using a simple input field.
+- **Real-Time Streaming:** Experience a unified assistant message container with a live typing indicator for smooth streaming responses.
+- **Performance Metrics:** View response times and token usage for each message.
+- **Mobile-Friendly Design:** Fully responsive interface optimized for desktops, tablets, and smartphones.
+- **Robust Error Handling:** Improved error messaging and defensive programming for a more reliable experience.
+- **Enhanced UI Updates:** Consolidated CSS styling (including CSS classes for connection status) and refined event handling ensure consistent behavior.
 
 ## Setup Instructions
 
 ### For Desktop Users
 
-1. Download the `lmstudiowebui.html` file from this repository.
-2. Save it to a location on your computer that you can easily access.
+1. **Download:** Get the `lmstudiowebui.html` file from this repository.
+2. **Save:** Store it in an easily accessible location on your computer.
+3. **Open:** Double-click the file or open it in your preferred web browser.
 
 ### For Mobile Users
-This works out of the box on Android devices. For iOS you need to open the file in Microsoft Edge or another browser. Safari/Chrome do not work. 
-There are several ways to get the `lmstudiowebui.html` file on your mobile device:
 
-1. **Direct Download**: 
-   - Open this repository on your mobile device's web browser.
-   - Find the `lmstudiowebui.html` file and download it directly to your device.
+The interface works seamlessly on Android devices. For iOS, use Microsoft Edge or another compatible browser (Safari and Chrome may have limitations).
 
-2. **Email to Yourself**:
-   - Download the `lmstudiowebui.html` file on your computer.
-   - Email it to yourself as an attachment.
-   - Open the email on your mobile device and download the attachment.
+You can transfer the `lmstudiowebui.html` file to your mobile device by any of these methods:
 
-3. **Cloud Storage**:
-   - Upload the `lmstudiowebui.html` file to a cloud storage service like Google Drive, Dropbox, or iCloud.
-   - Access the file from your mobile device using the respective cloud storage app.
-
-4. **File Transfer Apps**:
-   - Use apps like AirDrop (for iOS devices) or nearby sharing (for Android devices) to transfer the file from your computer to your mobile device.
+- **Direct Download:** Open this repository on your mobile browser and download the file.
+- **Email:** Download the file on your computer, email it to yourself, and open the attachment on your mobile device.
+- **Cloud Storage:** Upload the file to a service like Google Drive or Dropbox and access it from your mobile device.
+- **File Transfer Apps:** Use AirDrop (iOS) or Nearby Sharing (Android) to transfer the file.
 
 ## Usage Instructions
 
-1. **Start LM Studio Server**:
-   - Open LM Studio on your computer.
-   - Go to the "Server" tab (In 0.3.x -> Developer -> Local Server).
-   - Ensure that CORS is enabled and Serve on Local Network is enabled.
-   - Click "Start Server" and note down the server address.
+1. **Start LM Studio Server:**
+   - Launch LM Studio on your computer.
+   - Navigate to the "Server" tab (for 0.3.x, go to *Developer → Local Server*).
+   - Enable both CORS and "Serve on Local Network".
+   - Click **Start Server** and note the server address.
 
-2. **Open the Chat Interface**:
-   - On desktop: Double-click the `lmstudiowebui.html` file to open it in your default web browser.
-   - On mobile: Use a file manager app to locate the downloaded `lmstudiowebui.html` file and open it with your web browser.
+2. **Open the Chat Interface:**
+   - **Desktop:** Open the `lmstudiowebui.html` file in your web browser.
+   - **Mobile:** Use a file manager to locate and open the file with your browser.
 
-3. **Connect to LM Studio Server**:
-   - In the chat interface, enter the LM Studio server address in the input field at the top. 
-   - Click the "Connect" button.
+3. **Connect to the LM Studio Server:**
+   - Enter the LM Studio server address into the input field at the top.
+   - Click **Connect**. The interface will retrieve available models from your server.
+   - Select a model from the dropdown menu to begin chatting.
 
-4. **Start Chatting**:
-   - Once connected, you can start typing messages in the input field at the bottom of the screen.
-   - Press Enter or tap Send to send your message.
-   - The model's responses will appear in the chat window.
+4. **Start Chatting:**
+   - Type your message in the input field at the bottom.
+   - Press **Enter** or tap the **Send** button.
+   - Watch the assistant’s response stream in real time with the integrated typing indicator.
+   - Each message displays its response time and token usage.
 
 ## Troubleshooting
 
-- **Can't connect to server**: 
-  - Ensure LM Studio Server is running on your computer.
-  - Check that you're using the correct server address.
-  - If accessing from another device, make sure both devices are on the same network.
+- **Cannot Connect to Server:**
+  - Ensure the LM Studio server is running on your computer.
+  - Verify that the correct server address is being used.
+  - For cross-device connections, make sure all devices are on the same network.
 
-- **Slow responses**: 
-  - LM Studio processing speed depends on your computer's capabilities. Larger models may take longer to respond.
+- **Slow Responses:**
+  - The response time depends on your computer’s hardware and the complexity/size of the model.
 
-- **Interface not loading**: 
-  - Try opening the `lmstudiowebui.html` file with a different web browser.
+- **Interface Not Loading:**
+  - Try opening the file in a different web browser.
+  - Confirm that local file access is permitted in your browser settings.
+
+- **Unexpected Errors:**
+  - Check the error messages in the chat window for clues.
+  - Use your browser’s developer console for detailed logs if necessary.
+
+## Additional Information
+
+- **Unified Messaging Experience:**  
+  The latest update merges the assistant’s typing indicator with its message container, providing a smoother and less cluttered UI.
+  
+- **Improved CSS and Event Handling:**  
+  Connection status now toggles dedicated CSS classes, and the messaging input uses the `keydown` event for reliable Enter key detection.
+  
+- **Customizable:**  
+  The interface’s styling and behavior are easily customizable. Modify the CSS or JavaScript to better suit your preferences or environment.
 
 ## Security Note
 
-This interface is designed for local use only. Do not expose your LM Studio server to the public internet without proper security measures in place.
+This interface is intended for local use only. Do not expose your LM Studio server to the public internet without implementing proper security measures.
 
 ## Feedback and Contributions
 
-If you encounter any issues or have suggestions for improvements, please open an issue in this repository. Contributions via pull requests are welcome!
+Issues, suggestions, and contributions are welcome! If you encounter any problems or have ideas for further improvements, please open an issue or submit a pull request in this repository.
